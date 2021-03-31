@@ -1,0 +1,8 @@
+{{ form_start(form) }}
+    {{ form_widget(form) }}
+    <div class="row justify-content-between">
+	    <a class="btn btn-danger" href="{{ path('sector_index') }}">Cancelar</a>
+
+	    <button class="btn btn-success">{{ button_label|default('Guardar') }}</button>
+	</div>
+{{ form_end(form) }}

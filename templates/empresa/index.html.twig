@@ -1,0 +1,41 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Empresa{% endblock %}
+
+{% block body %}
+    <h1>Empresas</h1>
+
+    <table class="table">
+        <thead>
+            <tr>
+                <th>Id</th>
+                <th>Nombre</th>
+                <th>Telefono</th>
+                <th>Email</th>
+                <th>Sector</th>
+                <th>Acciones</th>
+            </tr>
+        </thead>
+        <tbody>
+        {% for empresa in empresas %}
+            <tr>
+                <td>{{ empresa.id }}</td>
+                <td>{{ empresa.nombre }}</td>
+                <td>{{ empresa.telefono }}</td>
+                <td>{{ empresa.email }}</td>
+                <td>{{ empresa.sector }}</td>
+                <td style="vertical-align: middle;" class="row">
+                    <a class="btn btn-primary btn-sm" href="{{ path('empresa_edit', {'id': empresa.id}) }}">Modificar</a>
+                    {{ include('empresa/_delete_form.html.twig') }}
+                </td>
+            </tr>
+        {% else %}
+            <tr>
+                <td colspan="6">no records found</td>
+            </tr>
+        {% endfor %}
+        </tbody>
+    </table>
+
+    <a class="btn btn-success" href="{{ path('empresa_new') }}">Añadir Empresa</a>
+{% endblock %}

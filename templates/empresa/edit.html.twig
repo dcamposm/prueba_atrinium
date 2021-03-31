@@ -1,0 +1,9 @@
+{% extends 'base.html.twig' %}
+
+{% block title %}Modificar Empresa{% endblock %}
+
+{% block body %}
+    <h1>Modificar Empresa</h1>
+
+    {{ include('empresa/_form.html.twig', {'button_label': 'Modificar'}) }}
+{% endblock %}
