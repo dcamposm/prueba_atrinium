@@ -17,7 +17,7 @@
             </tr>
         </thead>
         <tbody>
-        {% for empresa in empresas %}
+        {% for empresa in pager.currentPageResults %}
             <tr>
                 <td>{{ empresa.id }}</td>
                 <td>{{ empresa.nombre }}</td>
@@ -36,6 +36,6 @@
         {% endfor %}
         </tbody>
     </table>
-
+    {{ pagerfanta(pager) }}
     <a class="btn btn-success" href="{{ path('empresa_new') }}">Añadir Empresa</a>
 {% endblock %}

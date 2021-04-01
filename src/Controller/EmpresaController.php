@@ -3,23 +3,46 @@
 namespace App\Controller;
 
 use App\Entity\Empresa;
+use Pagerfanta\Doctrine\ORM\QueryAdapter;
+use Pagerfanta\Adapter\ArrayAdapter;
+use Pagerfanta\Pagerfanta;
 use App\Form\EmpresaType;
 use App\Repository\EmpresaRepository;
-use App\Repository\SectorRepository;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
 
+
 #[Route('/empresa')]
 class EmpresaController extends AbstractController
 {
     #[Route('/', name: 'empresa_index', methods: ['GET'])]
-    public function index(EmpresaRepository $empresaRepository, SectorRepository $sectorRepository): Response
+    public function index(EmpresaRepository $empresaRepository, Request $request): Response
     {
+        $empresas = $empresaRepository->findAll();
+        /*$queryBuilder = $this->getDoctrine()->getRepository(Empresa::class)
+            ->createQueryBuilder('e')
+             ->select('*')
+            ->getQuery();
+
+        $list = $query->getResult();
+
+        $pagerfanta = new Pagerfanta(
+            new QueryAdapter($list)
+        );*/
+        
+        $adapter = new ArrayAdapter($empresas);
+        $pagerfanta = new Pagerfanta($adapter);
+        //$pagerfanta->setMaxPerPage(2);
+        //$pagerfanta->getMaxPerPage();
+        if ($request->get('page') !== null) {
+            $pagerfanta->setCurrentPage($request->get('page'));
+        }
+        //dump($pagerfanta);
         return $this->render('empresa/index.html.twig', [
-            'empresas' => $empresaRepository->findAll(),
-            'sectors' => $sectorRepository->findAll(),
+            //'empresas' => $empresas,
+            'pager' => $pagerfanta,
         ]);
     }
 
