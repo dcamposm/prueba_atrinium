@@ -3,8 +3,22 @@
 {% block title %}Empresa{% endblock %}
 
 {% block body %}
-    <h1>Empresas</h1>
-
+    <div class="row justify-content-between">
+        <h1>Empresas</h1>
+        <div class="col-5">
+            <form class="row" method="get" action="{{ path('empresa_index') }}">
+                <div>
+                    {{ form_widget(form.nombre) }}
+                </div>
+                <div>
+                    {{ form_widget(form.sector) }}
+                </div>
+                <div>
+                    <button class="btn btn-outline-primary" type="submit">Buscar</button>
+                </div>
+            </form>
+        </div>
+    </div>
     <table class="table">
         <thead>
             <tr>
@@ -36,6 +50,10 @@
         {% endfor %}
         </tbody>
     </table>
-    {{ pagerfanta(pager) }}
-    <a class="btn btn-success" href="{{ path('empresa_new') }}">Añadir Empresa</a>
+    <div class="row justify-content-between">
+        <a class="btn btn-success col-2 col-sm-2" href="{{ path('empresa_new') }}">Añadir Empresa</a>
+        <div class="col-3">
+            {{ pagerfanta(pager) }}
+        </div>
+    </div>
 {% endblock %}

@@ -9,6 +9,7 @@
         {% block stylesheets %}
             <link href="https://fonts.googleapis.com/css?family=Open+Sans:300,300i,400,400i,500,500i,600,600i&display=swap" rel="stylesheet" />
             <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.6.1/css/all.css" integrity="sha384-gfdkjb5BdAXd+lj+gudLWI+BXq4IuLW5IT+brZEZsLFm++aCMlF1V92rMkPaX4PP" crossorigin="anonymous">
+            <link rel="stylesheet" href="{{ asset('bundles/babdevpagerfanta/css/pagerfanta.css') }}">
             {{ encore_entry_link_tags('app') }}
         {% endblock %}
     </head>
@@ -19,18 +20,30 @@
                 <div class="container-fluid">
                     <ul class="navbar-nav me-auto mb-2 mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link active" href="{{ path('empresa_index') }}">Empresas</a>
+                            <a class="nav-link active" href="{{ path('home') }}">Inicio</a>
                         </li>
-                        <li class="nav-item">
-                            <a class="nav-link active" href="{{ path('sector_index') }}">Sectores</a>
-                        </li>
+                        {% if is_granted('ROLE_USER') %}
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ path('empresa_index') }}">Empresas</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ path('sector_index') }}">Sectores</a>
+                            </li>
+                        {% endif %}
+                        {% if app.user == null %}
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ path('app_login') }}">Iniciar session</a>
+                            </li>
+                            <li class="nav-item">
+                                <a class="nav-link active" href="{{ path('app_register') }}">Registrar Usuario</a>
+                            </li>
+                        {% endif %}
+                        {% if app.user %}
+                            <a class="navbar-text" href="{{ path('app_logout') }}">
+                              {{ app.user.username ?? 'Anonymous user' }}
+                            </a>
+                        {% endif %}
                     </ul>               
-                </div>
-            </nav>
-
-            <nav class="bg-light border-bottom">
-                <div class="container">
-                    
                 </div>
             </nav>
         </header>

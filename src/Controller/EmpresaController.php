@@ -20,29 +20,36 @@ class EmpresaController extends AbstractController
     #[Route('/', name: 'empresa_index', methods: ['GET'])]
     public function index(EmpresaRepository $empresaRepository, Request $request): Response
     {
-        $empresas = $empresaRepository->findAll();
-        /*$queryBuilder = $this->getDoctrine()->getRepository(Empresa::class)
-            ->createQueryBuilder('e')
-             ->select('*')
-            ->getQuery();
-
-        $list = $query->getResult();
-
-        $pagerfanta = new Pagerfanta(
-            new QueryAdapter($list)
-        );*/
+        $form = $this->createForm(EmpresaType::class);
+        $form->handleRequest($request);
+        //dump($request->get('empresa')['nombre']);
+        if ($request->get('empresa') !== null) {
+            //dump($request); 
+            if ($request->get('empresa') !== null) {
+                $empresas = $empresaRepository->findBy(
+                    ['sector' => $request->get('empresa')['sector']],
+                );
+            } else {
+                $empresas = $empresaRepository->findBy(
+                    ['nombre' => $request->get('empresa')['nombre'],
+                    'sector' => $request->get('empresa')['sector']],
+                );
+            }
+            
+        } else {
+            $empresas = $empresaRepository->findAll(); 
+        }
         
         $adapter = new ArrayAdapter($empresas);
         $pagerfanta = new Pagerfanta($adapter);
-        //$pagerfanta->setMaxPerPage(2);
-        //$pagerfanta->getMaxPerPage();
+
         if ($request->get('page') !== null) {
             $pagerfanta->setCurrentPage($request->get('page'));
         }
-        //dump($pagerfanta);
+
         return $this->render('empresa/index.html.twig', [
-            //'empresas' => $empresas,
             'pager' => $pagerfanta,
+            'form' => $form->createView(),
         ]);
     }
 
