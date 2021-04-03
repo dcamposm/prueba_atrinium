@@ -12,33 +12,17 @@ use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
-
+use App\Entity\Sector;
+use App\Form\SectorType;
+use App\Repository\SectorRepository;
 
 #[Route('/empresa')]
 class EmpresaController extends AbstractController
 {
     #[Route('/', name: 'empresa_index', methods: ['GET'])]
-    public function index(EmpresaRepository $empresaRepository, Request $request): Response
+    public function index(EmpresaRepository $empresaRepository, SectorRepository $sectorRepository, Request $request): Response
     {
-        $form = $this->createForm(EmpresaType::class);
-        $form->handleRequest($request);
-        //dump($request->get('empresa')['nombre']);
-        if ($request->get('empresa') !== null) {
-            //dump($request); 
-            if ($request->get('empresa') !== null) {
-                $empresas = $empresaRepository->findBy(
-                    ['sector' => $request->get('empresa')['sector']],
-                );
-            } else {
-                $empresas = $empresaRepository->findBy(
-                    ['nombre' => $request->get('empresa')['nombre'],
-                    'sector' => $request->get('empresa')['sector']],
-                );
-            }
-            
-        } else {
-            $empresas = $empresaRepository->findAll(); 
-        }
+        $empresas = $empresaRepository->findAll(); 
         
         $adapter = new ArrayAdapter($empresas);
         $pagerfanta = new Pagerfanta($adapter);
@@ -49,7 +33,7 @@ class EmpresaController extends AbstractController
 
         return $this->render('empresa/index.html.twig', [
             'pager' => $pagerfanta,
-            'form' => $form->createView(),
+            'sectores' => $sectorRepository->findAll(),
         ]);
     }
 
@@ -74,13 +58,13 @@ class EmpresaController extends AbstractController
         ]);
     }
 
-    #[Route('/{id}', name: 'empresa_show', methods: ['GET'])]
-    public function show(Empresa $empresa): Response
+    //#[Route('/{id}', name: 'empresa_show', methods: ['GET'])]
+    /*public function show(Empresa $empresa): Response
     {
         return $this->render('empresa/show.html.twig', [
             'empresa' => $empresa,
         ]);
-    }
+    }*/
 
     #[Route('/{id}/edit', name: 'empresa_edit', methods: ['GET', 'POST'])]
     public function edit(Request $request, Empresa $empresa): Response
@@ -110,5 +94,40 @@ class EmpresaController extends AbstractController
         }
 
         return $this->redirectToRoute('empresa_index');
+    }
+
+    #[Route('/find', name: 'empresa_find', methods: ['GET'])]
+    public function find(EmpresaRepository $empresaRepository, SectorRepository $sectorRepository, Request $request): Response
+    {
+        if ($request->get('empresa') !== null) {
+            if ($request->get('empresa')['nombre'] == null) {
+                $empresas = $empresaRepository->findBy(
+                    ['sector' => $request->get('empresa')['sector']],
+                );
+            } elseif ($request->get('empresa')['sector'] == 0) {
+                $empresas = $empresaRepository->findBy(
+                    ['nombre' => $request->get('empresa')['nombre']],
+                );
+            } else {
+                $empresas = $empresaRepository->findBy(
+                    ['nombre' => $request->get('empresa')['nombre'],
+                    'sector' => $request->get('empresa')['sector']],
+                );
+            }     
+        } else {
+            return $this->redirectToRoute('empresa_index');
+        }
+
+        $adapter = new ArrayAdapter($empresas);
+        $pagerfanta = new Pagerfanta($adapter);
+
+        if ($request->get('page') !== null) {
+            $pagerfanta->setCurrentPage($request->get('page'));
+        }
+
+        return $this->render('empresa/index.html.twig', [
+            'pager' => $pagerfanta,
+            'sectores' => $sectorRepository->findAll(),
+        ]);
     }
 }

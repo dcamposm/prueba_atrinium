@@ -6,12 +6,17 @@
     <div class="row justify-content-between">
         <h1>Empresas</h1>
         <div class="col-5">
-            <form class="row" method="get" action="{{ path('empresa_index') }}">
+            <form class="row" method="get" action="{{ path('empresa_find') }}">
                 <div>
-                    {{ form_widget(form.nombre) }}
+                    <input type="text" class="form-control" id="nombre" name="empresa[nombre]" placeholder="Nombre" aria-label="Username" aria-describedby="addon-wrapping">
                 </div>
                 <div>
-                    {{ form_widget(form.sector) }}
+                    <select id="sector" name="empresa[sector]"  class="form-control">
+                        <option value="0">Sector</option>
+                        {% for sector in sectores %}
+                            <option value="{{ sector.id }}">{{ sector.nombre }}</option>
+                        {% endfor %}
+                    </select>
                 </div>
                 <div>
                     <button class="btn btn-outline-primary" type="submit">Buscar</button>
